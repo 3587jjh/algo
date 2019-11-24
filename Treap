@@ -93,6 +93,7 @@ struct Treap {
 	Treap() {root = NULL;}
 	~Treap() {destroy(root);}
 	
+	int size() {return root ? root->sz : 0;}
 	void insert(KeyType key) {
 		root = insert(root, new Node(key));
 	}
