@@ -1,0 +1,22 @@
+LL exGcd(LL a, LL b, LL& x, LL& y) {
+    if (b == 0) {x = 1; y = 0; return a;}
+    LL x1, y1;
+    LL ret = exGcd(b, a%b, x1, y1);   
+    x = y1; y = x1 - (a/b)*y1;
+    return ret;
+}
+
+LL modInv(LL a, LL M) {
+	LL x, y;
+	LL res = exGcd(a, M, x, y);
+	assert(res == 1);
+	if (x < 0) x += M*((-x/M)+1);
+	return x;
+}
+
+LL pow(LL a, LL n, LL M) {
+	if (n == 0) return 1;
+	if (n&1) return (a*pow(a, n-1, M))%M;
+	LL half = pow(a, n>>1, M);
+	return (half*half)%M;
+}
