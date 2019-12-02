@@ -1,3 +1,4 @@
+// operator <, ==, <= should be defined for KeyType
 struct Treap {
 	struct Node {
 		KeyType key;
