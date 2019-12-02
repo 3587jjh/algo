@@ -26,15 +26,15 @@ struct SegTree {
 		return merge(query(l, r, node*2, nl, nm),
 			query(l, r, node*2+1, nm+1, nr));
 	}
-	Info update(int pos, LL val, int node, int nl, int nr) {
+	Info update(int pos, int node, int nl, int nr) {
 		if (pos < nl || nr < pos) return tree[node];
 		if (nl == nr) {
 			/**write**/
 			return tree[node];
 		}
 		int nm = (nl+nr)/2;
-		return tree[node] = merge(update(pos, val, node*2, nl, nm),
-			update(pos, val, node*2+1, nm+1, nr));
+		return tree[node] = merge(update(pos, node*2, nl, nm),
+			update(pos, node*2+1, nm+1, nr));
 	}
 	/******user interface******/
 	// fill "/**write**/" before use
@@ -45,6 +45,6 @@ struct SegTree {
 	void update(int pos, LL val, bool add) {
 		if (add) A[pos] += val;
 		else A[pos] = val;
-		update(pos, A[pos], 1, 1, n);
+		update(pos, 1, 1, n);
 	}
 };
