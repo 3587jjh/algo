@@ -100,6 +100,7 @@ struct Treap {
 	void erase(KeyType key) {
 		root = erase(root, key);
 	}
+	// 1-based
 	KeyType findKth(int kth) {
 		return findKth(root, kth)->key;
 	}
