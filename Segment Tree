@@ -42,7 +42,9 @@ struct SegTree {
 	Info query(int l, int r) {
 		return query(l, r, 1, 1, n);
 	}
-	void update(int pos, LL val) {
-		update(pos, val, 1, 1, n);
+	void update(int pos, LL val, bool add) {
+		if (add) A[pos] += val;
+		else A[pos] = val;
+		update(pos, A[pos], 1, 1, n);
 	}
 };
