@@ -1,0 +1,50 @@
+template <typename T>
+struct SegTree {
+	int n;
+	VL A; // 1-based
+	vector<T> tree;
+
+	SegTree():n(0) {}
+	SegTree(const VL& _A) {
+		assert(!_A.empty()); A = _A;
+		n = A.size()-1; tree.resize(4*A.size());
+		init(1, 1, n);
+	}
+	T init(int node, int nl, int nr) {
+		if (nl == nr) {
+			/**write**/
+			return tree[node];
+		}
+		int nm = (nl+nr)/2;
+		return tree[node] = merge(init(node*2, nl, nm),
+			init(node*2+1, nm+1, nr));
+	}
+	T query(int l, int r, int node, int nl, int nr) {
+		if (r < nl || nr < l) return /**write**/
+		if (l <= nl && nr <= r) return tree[node];
+		int nm = (nl+nr)/2;
+		return merge(query(l, r, node*2, nl, nm),
+			query(l, r, node*2+1, nm+1, nr));
+	}
+	T update(int pos, int node, int nl, int nr) {
+		if (pos < nl || nr < pos) return tree[node];
+		if (nl == nr) {
+			/**write**/
+			return tree[node];
+		}
+		int nm = (nl+nr)/2;
+		return tree[node] = merge(update(pos, node*2, nl, nm),
+			update(pos, node*2+1, nm+1, nr));
+	}
+	/******user interface******/
+	// fill "/**write**/" before use
+	T merge(T a, T b) {/**write**/}
+	T query(int l, int r) {
+		return query(l, r, 1, 1, n);
+	}
+	void update(int pos, LL val, bool add) {
+		if (add) A[pos] += val;
+		else A[pos] = val;
+		update(pos, 1, 1, n);
+	}
+};
