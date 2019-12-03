@@ -1,0 +1,112 @@
+// operator <, ==, <= should be defined for T
+template <typename T>
+struct Treap {
+	struct Node {
+		T key;
+		int pr, sz;
+		Node* l; Node* r;
+	
+		Node(T _key):key(_key),pr(rand()),
+			sz(1),l(0),r(0){}
+	
+		void calcSz() {
+			sz = 1;
+			if (l) sz += l->sz;
+			if (r) sz += r->sz;
+		}
+		void setL(Node* node) {l=node; calcSz();}
+		void setR(Node* node) {r=node; calcSz();}
+	};
+	typedef pair<Node*, Node*> NodePair;
+	
+	NodePair split(Node* root, T key) {
+		if (!root) return NodePair(0, 0);
+		if (root->key < key) {
+			NodePair rs = split(root->r, key);
+			root->setR(rs.fst);
+			return NodePair(root, rs.snd);
+		}
+		else {
+			NodePair ls = split(root->l, key);
+			root->setL(ls.snd);
+			return NodePair(ls.fst, root);
+		}
+	}
+	Node* merge(Node* t1, Node* t2) {
+		if (!t1) return t2;
+		if (!t2) return t1;
+		if (t1->pr < t2->pr) {
+			t2->setL(merge(t1, t2->l));
+			return t2;
+		}
+		else {
+			t1->setR(merge(t1->r, t2));
+			return t1;
+		}
+	}
+	Node* insert(Node* root, Node* node) {
+		if (!root) return node;
+		if (root->pr > node->pr) {
+			if (node->key < root->key)
+				root->setL(insert(root->l, node));
+			else root->setR(insert(root->r, node));
+			return root;
+		}
+		else {
+			NodePair spl = split(root, node->key);
+			node->setL(spl.fst);
+			node->setR(spl.snd);
+			return node;
+		}
+	}
+	Node* erase(Node* root, T key) {
+		if (!root) return root;
+		if (root->key == key) {
+			Node* ret = merge(root->l, root->r);
+			delete root;
+			return ret;
+		}
+		if (key < root->key)
+			root->setL(erase(root->l, key));
+		else root->setR(erase(root->r, key));
+		return root;
+	}
+	Node* findKth(Node *root, int kth) {
+		int sz = root->l ? root->l->sz : 0;
+		if (kth <= sz) return findKth(root->l, kth);
+		else if (kth == sz+1) return root;
+		else return findKth(root->r, kth-sz-1);
+	}
+	int countLess(Node *root, T key) {
+		if (!root) return 0;
+		if (key <= root->key)
+			return countLess(root->l, key);
+		int sz = root->l ? root->l->sz : 0;
+		return sz+1 + countLess(root->r, key);
+	}
+	void destroy(Node* root) {
+		if (!root) return;
+		destroy(root->l);
+		destroy(root->r);
+		delete root;
+	}
+	/******user interface******/
+	Node* root;
+	Treap() {root = NULL;}
+	~Treap() {destroy(root);}
+	
+	int size() {return root ? root->sz : 0;}
+	void insert(T key) {
+		root = insert(root, new Node(key));
+	}
+	void erase(T key) {
+		root = erase(root, key);
+	}
+	// 1-based
+	T findKth(int kth) {
+		return findKth(root, kth)->key;
+	}
+	int countLess(T key) {
+		return countLess(root, key);
+	}
+};
