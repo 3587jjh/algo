@@ -25,7 +25,7 @@ void dft(vector<Complex>& v, const Complex& w) {
 		powW *= w; 
 	}
 }
-VI multiply(const VI& a, const VI& b) {
+VL multiply(const VL& a, const VL& b) {
 	int n = roundUp(max(a.size(), b.size())) * 2;
 	vector<Complex> ac(a.begin(), a.end());
 	vector<Complex> bc(b.begin(), b.end());
@@ -38,7 +38,7 @@ VI multiply(const VI& a, const VI& b) {
 	for (int i = 0; i < n; ++i) ac[i] *= bc[i];
 	dft(ac, polar(1.0, -2*PI/n));
 	
-	VI ret(n);
+	VL ret(n);
 	for (int i = 0; i < n; ++i)
 		ret[i] = round((ac[i] / (double)n).real());
 	return ret;
