@@ -1,0 +1,111 @@
+typedef complex<double> Complex;
+const double PI = 2.0 * acos(0.0);
+struct BigInt {
+	VI v; // reversed
+	BigInt() {}
+	BigInt(const string& str) {
+		int n = str.size();
+		v.resize(n);
+		for (int i = 0; i < n; ++i)
+			v[i] = str[n-i-1]-'0';
+	}
+	void normalize() {
+		v.push_back(0);
+		for (int i = 0; i+1 < v.size(); ++i) {
+			int k = v[i] >= 0 ? v[i]/10 : (v[i]-9)/10;
+			v[i] -= 10*k; v[i+1] += k;
+		}
+		while (v.size() > 1 && v.back() == 0)
+			v.pop_back();
+	}
+	int roundUp(int n) const {
+		int ret = 1;
+		while (ret < n) ret <<= 1;
+		return ret;
+	}
+	void dft(vector<Complex>& v, const Complex& w) const {
+		int n = v.size();
+		if (n == 1) return;
+
+		vector<Complex> even(n/2), odd(n/2);
+		for(int i = 0; i < n/2; ++i) {
+			even[i] = v[i*2];
+			odd[i] = v[i*2 + 1];
+		}
+		dft(even, w*w);
+		dft(odd, w*w);
+
+		Complex powW = 1.0;
+		for(int i = 0; i < n/2; ++i) {
+			Complex offset = powW * odd[i];
+			v[i] = even[i] + offset;
+			v[i + n/2] = even[i] - offset;
+			powW *= w; 
+		}
+	}
+	VI multiply(const VI& a, const VI& b) const {
+		int n = roundUp(max(a.size(), b.size())) * 2;
+		vector<Complex> ac(a.begin(), a.end());
+		vector<Complex> bc(b.begin(), b.end());
+		ac.resize(n);
+		bc.resize(n);
+	
+		Complex w = polar(1.0, 2 * PI / n);
+		dft(ac, w);
+		dft(bc, w);
+		for (int i = 0; i < n; ++i) ac[i] *= bc[i];
+		dft(ac, polar(1.0, -2 * PI / n));
+	
+		VI ret(n);
+		for (int i = 0; i < n; ++i)
+			ret[i] = round((ac[i] / (double)n).real());
+		return ret;
+	}
+	/******user interface******/
+	string to_string() const {
+		string ret;
+		for (int i = (int)v.size()-1; i >= 0; --i)
+			ret += v[i]+'0';
+		return ret;
+	}
+	bool operator <(const BigInt& rhs) const {
+		if (v.size() != rhs.v.size())
+			return v.size() < rhs.v.size();
+		int pos = (int)v.size()-1;
+		while (pos >= 0 && v[pos] == rhs.v[pos]) --pos;
+		return pos >= 0 && v[pos] < rhs.v[pos];
+	}
+	bool operator ==(const BigInt& rhs) const {
+		if (v.size() != rhs.v.size()) return false;
+		for (int i = 0; i < v.size(); ++i)
+			if (v[i] != rhs.v[i]) return false;
+		return true;
+	}
+	bool operator <=(const BigInt& rhs) const {
+		return *this < rhs || *this == rhs;
+	}
+	BigInt operator +(const BigInt& rhs) const {
+		BigInt ret;
+		ret.v.resize(max(v.size(), rhs.v.size()));
+		for (int i = 0; i < v.size(); ++i)
+			ret.v[i] += v[i];
+		for (int i = 0; i < rhs.v.size(); ++i)
+			ret.v[i] += rhs.v[i];
+		ret.normalize();
+		return ret;
+	}
+	BigInt operator -(const BigInt& rhs) const {
+		assert(!(*this < rhs));
+		BigInt ret = *this;
+		for (int i = 0; i < rhs.v.size(); ++i)
+			ret.v[i] -= rhs.v[i];
+		ret.normalize();
+		return ret;
+	}
+	BigInt operator *(const BigInt& rhs) const {
+		BigInt ret;
+		ret.v = multiply(v, rhs.v);
+		ret.normalize();
+		return ret;
+	}
+};
