@@ -17,9 +17,9 @@ struct Dinic {
 	}
 	~Dinic() {
 		for (int i = 0; i < MAXV; ++i) {
-        	for (Edge* e : adj[i]) delete e;
-        	adj[i].clear();
-        }
+        		for (Edge* e : adj[i]) delete e;
+        		adj[i].clear();
+        	}
 	}
 
 	bool bfs(int src, int dst) {
