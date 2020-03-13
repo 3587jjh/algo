@@ -18,7 +18,17 @@ struct Treap {
 		void setR(Node* node) {r=node; calcSz();}
 	};
 	typedef pair<Node*, Node*> NodePair;
+	Node* root;
 	
+	Treap() {root = NULL;}
+	~Treap() {destroy(root);}
+	
+	void destroy(Node* root) {
+		if (!root) return;
+		destroy(root->l);
+		destroy(root->r);
+		delete root;
+	}
 	NodePair split(Node* root, T key) {
 		if (!root) return NodePair(0, 0);
 		if (root->key < key) {
@@ -84,17 +94,7 @@ struct Treap {
 		int sz = root->l ? root->l->sz : 0;
 		return sz+1 + countLess(root->r, key);
 	}
-	void destroy(Node* root) {
-		if (!root) return;
-		destroy(root->l);
-		destroy(root->r);
-		delete root;
-	}
 	/******user interface******/
-	Node* root;
-	Treap() {root = NULL;}
-	~Treap() {destroy(root);}
-	
 	int size() {return root ? root->sz : 0;}
 	void insert(T key) {
 		root = insert(root, new Node(key));
