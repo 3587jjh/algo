@@ -16,21 +16,21 @@ namespace miller_rabin {
         return ret;
     }
     bool miller_rabin(LL x, LL a) {
-        if (x%a == 0) return 0;
+        if (x%a == 0) return false;
         LL d = x-1;
         while (true) {
             LL tmp = pow(a, d, x);
             if (d&1) return (tmp != 1 && tmp != x-1);
-            if (tmp == x-1) return 0;
+            if (tmp == x-1) return false;
             d >>= 1;
         }
     }
+    /******user interface******/
     bool is_prime(LL x) {
-        for (auto& i : {2,3,5,7,11,13,17,19,23,29,31,37}) {
-            if (x == i) return 1;
-            if (x > 40 && miller_rabin(x, i)) return 0;
-        }
-        return x > 40;
+        // add more primes to improve accuracy
+        for (auto& i : {2,3,5,7,11,13})
+            if (miller_rabin(x, i)) return false;
+        return true;
     }
 }
 namespace pollard_rho {
