@@ -1,0 +1,31 @@
+namespace miller_rabin {
+    LL mult(LL x, LL y, LL M) {
+        return (__int128)x * y % M;
+    }
+    LL pow(LL x, LL y, LL M) {
+        LL ret = 1, piv = x%M;
+        while (y) {
+            if (y&1) ret = mult(ret, piv, M);
+            piv = mult(piv, piv, M);
+            y >>= 1;
+        }
+        return ret;
+    }
+    bool miller_rabin(LL x, LL a) {
+        if (x%a == 0) return false;
+        LL d = x-1;
+        while (true) {
+            LL tmp = pow(a, d, x);
+            if (d&1) return (tmp != 1 && tmp != x-1);
+            if (tmp == x-1) return false;
+            d >>= 1;
+        }
+    }
+    /******user interface******/
+    bool is_prime(LL x) {
+        // add more primes to improve accuracy
+        for (auto& i : {2,3,5,7,11,13})
+            if (miller_rabin(x, i)) return false;
+        return true;
+    }
+}
