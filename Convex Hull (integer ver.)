@@ -15,6 +15,7 @@ struct VT {
 LL ccw(VT p, VT a, VT b) {
 	return (a-p).cross(b-p);
 }
+
 struct Comparator {
 	VT pivot;
 	Comparator(VT _pivot):pivot(_pivot){}
