@@ -1,0 +1,27 @@
+// calculate longest palindrome length
+int manacher(const VI& input) {
+	// dummy value shouldn't be included in the input
+	int dummy = INT_MAX;
+	VI v = {dummy};
+
+	for (auto it : input) {
+		v.push_back(it);
+		v.push_back(dummy);
+	}
+	int n = v.size();
+	int ret = 0, r = 0, p = 0;
+	VI A(n, 0);
+    
+    for (int i = 1; i < n; ++i) {
+        if (i <= r) A[i] = min(r-i, A[2*p-i]);
+
+        while (0 <= i-A[i]-1 && i+A[i]+1 < n &&
+            v[i-A[i]-1] == v[i+A[i]+1]) {
+            ++A[i];    
+        }
+        if (i+A[i] > r)
+            r = i+A[i], p = i;
+        ret = max(ret, A[i]);
+    }
+    return ret;
+}
