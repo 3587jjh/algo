@@ -1,4 +1,4 @@
-// calculate longest palindrome length
+// calculate the longest palindrome length
 int manacher(const VI& input) {
 	// dummy value shouldn't be included in the input
 	int dummy = INT_MAX;
