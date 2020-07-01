@@ -1,7 +1,7 @@
 struct Dinic {
 	struct Edge {
 		int to, c, f;
-	    Edge* rev;
+		Edge* rev;
 		Edge(int _to, int _c) :
 			to(_to), c(_c), f(0) {}
 		int r() {return c-f;}
