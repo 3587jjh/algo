@@ -1,0 +1,111 @@
+#include <bits/stdc++.h>
+#define fst first
+#define snd second
+#define KeyType Info
+#define all(x) (x).begin(), (x).end()
+using namespace std;
+typedef long long LL;
+typedef pair<int, int> PII;
+typedef vector<int> VI;
+typedef vector<VI> VVI;
+typedef vector<PII> VII;
+typedef pair<LL, LL> PLL;
+typedef vector<LL> VL;
+typedef vector<VL> VVL;
+typedef vector<PLL> VLL;
+
+struct BiMatch { // 1-based
+	int n, m, sz;
+	VVI adj;
+	VI matchAB, matchBA;
+	vector<bool> chk, XA, XB;
+
+	BiMatch(int _n, int _m) {
+		// _n = group A의 정점 개수
+		// _m = group B의 정점 개수
+		n = _n; m = _m;
+		sz = max(n, m)+1;
+		adj.resize(sz);
+	}
+	bool dfs(int a) {
+		if (chk[a]) return false;
+		chk[a] = true;
+		for (int b : adj[a])
+			if (matchBA[b] == -1 || dfs(matchBA[b])) {
+				matchBA[b] = a;
+				matchAB[a] = b;
+				return true;
+			}
+		return false;
+	}
+	void maxMatch() {
+		mch = 0;
+		matchAB = matchBA = VI(sz, -1);
+		for (int a = 1; a <= n; ++a) {
+			chk = vector<bool>(sz);
+			if (dfs(a)) ++mch;
+		}
+	}
+	void trace(int u, bool left) {
+		if (left) {
+		    XA[u] = true;
+		    for (int v : adj[u])
+		        if (matchAB[u] != v && !XB[v])
+		            trace(v, false);
+		} 
+		else {
+		    XB[u] = true;
+		    int v = matchBA[u];
+		    if (v != -1 && !XA[v])
+		        trace(v, true);
+		}
+	}
+	/******user interface******/
+	int mch; // max match
+	VI ca, cb; // minimum vertex cover of A, B
+	VI sa, sb; // maximum independent set of A, B
+
+	// (Au → Bv) 간선 정보 추가
+	void add(int u, int v) {
+		adj[u].push_back(v);
+	}
+	void start() {
+		maxMatch();
+		XA = XB = vector<bool>(sz);
+		for (int i = 1; i <= n; ++i)
+			if (matchAB[i] == -1)
+				trace(i, true);
+
+		for (int i = 1; i <= n; ++i) {
+			if (!XA[i]) ca.push_back(i);
+			else sa.push_back(i);
+		}
+		for (int i = 1; i <= m; ++i) {
+			if (XB[i]) cb.push_back(i);
+			else sb.push_back(i);
+		}
+	}
+};
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+
+	int n, m;
+	cin >> n >> m;
+	BiMatch BM(n, m);
+
+	for (int i = 1; i <= n; ++i) {
+		int p; cin >> p;
+		while (p--) {
+			int j; cin >> j;
+			BM.add(i, j);
+		}
+	}
+	BM.start();
+	cout << BM.mch << "\n";
+	cout << BM.ca.size() << ' ';
+	for (auto it : BM.ca) cout << it << ' ';
+	cout << "\n" << BM.cb.size() << ' ';
+	for (auto it : BM.cb) cout << it << ' ';
+}
