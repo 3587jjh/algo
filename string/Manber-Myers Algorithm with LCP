@@ -51,7 +51,7 @@ VI getLCP(const string& s, const VI& perm) {
         if (g[i] > 0) {
             int j = perm[g[i]-1];
             while (max(i, j) + mch < n && 
-				s[i+mch] == s[j+mch]) {
+		s[i+mch] == s[j+mch]) {
                 ++mch;   
             }
             lcp[g[i]] = mch;
