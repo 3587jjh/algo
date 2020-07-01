@@ -1,0 +1,62 @@
+struct Cmp {
+    const VI& g;
+    int t;
+    Cmp(const VI& _g, int _t) :
+        g(_g), t(_t) {}
+
+    bool operator ()(int i, int j) {
+        if (g[i] != g[j])
+            return g[i] < g[j];
+        return g[i+t] < g[j+t];
+    }
+};
+
+VI getSA(const string& s) {
+    int n = s.size(), t = 1;
+    VI g(n+1), perm(n);
+
+    for (int i = 0; i < n; ++i) {
+        g[i] = s[i];
+        perm[i] = i;
+    }
+    g[n] = -1;
+
+    while (t < n) {
+        Cmp cmp(g, t);
+        sort(all(perm), cmp);
+
+        VI ng(n + 1);
+        ng[perm[0]] = 0;
+
+        for (int i = 1; i < n; ++i)
+            if (cmp(perm[i-1], perm[i]))
+                ng[perm[i]] = ng[perm[i-1]] + 1;
+            else ng[perm[i]] = ng[perm[i-1]];
+        ng[n] = -1;
+        g = ng;
+        t *= 2;
+    }
+    return perm;
+}
+
+VI getLCP(const string& s, const VI& perm) {
+    int n = s.size();
+    VI lcp(n, 0), g(n, 0);
+    int mch = 0;
+    
+    for (int i = 0; i < n; ++i)
+        g[perm[i]] = i;
+
+    for (int i = 0; i < n; ++i) {
+        if (g[i] > 0) {
+            int j = perm[g[i]-1];
+            while (max(i, j) + mch < n && 
+				s[i+mch] == s[j+mch]) {
+                ++mch;   
+            }
+            lcp[g[i]] = mch;
+        }
+        if (mch) --mch;
+    }
+    return lcp;
+}
