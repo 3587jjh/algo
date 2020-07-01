@@ -1,4 +1,4 @@
-// operator <, ==, <= should be defined for T
+// operator <, ==, ≤ should be defined for T
 template <typename T>
 struct Treap {
 	struct Node {
