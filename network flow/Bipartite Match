@@ -1,4 +1,4 @@
-struct BiMatch { // 1-based
+struct BiMatch {
 	int n, m, sz;
 	VVI adj;
 	VI matchAB, matchBA;
@@ -49,7 +49,7 @@ struct BiMatch { // 1-based
 	VI ca, cb; // minimum vertex cover of A, B
 	VI sa, sb; // maximum independent set of A, B
 
-	// (Au → Bv) 간선 정보 추가
+	// (Au → Bv) 간선 정보 추가 (1-based)
 	void add(int u, int v) {
 		adj[u].push_back(v);
 	}
@@ -70,26 +70,3 @@ struct BiMatch { // 1-based
 		}
 	}
 };
-
-int main() {
-	ios::sync_with_stdio(false);
-	cin.tie(NULL);
-
-	int n, m;
-	cin >> n >> m;
-	BiMatch BM(n, m);
-
-	for (int i = 1; i <= n; ++i) {
-		int p; cin >> p;
-		while (p--) {
-			int j; cin >> j;
-			BM.add(i, j);
-		}
-	}
-	BM.start();
-	cout << BM.mch << "\n";
-	cout << BM.ca.size() << ' ';
-	for (auto it : BM.ca) cout << it << ' ';
-	cout << "\n" << BM.cb.size() << ' ';
-	for (auto it : BM.cb) cout << it << ' ';
-}
