@@ -1,0 +1,74 @@
+struct MCMF {
+	struct Edge {
+		int to, c, f, d;
+		Edge* rev;
+		Edge(int _to, int _c, int _d) :
+			to(_to), c(_c), f(0), d(_d){}
+		int r() {return c-f;}
+		void push(int _f) {f+=_f; rev->f-=_f;}
+	};
+	vector<vector<Edge*>> adj;
+	int V; // 정점의 총 개수(src, sink포함)
+	MCMF(int _V=0) {
+		V = _V;
+		adj.resize(V);
+	}
+	~MCMF() {
+		for (int i = 0; i < V; ++i) {
+			for (Edge* e : adj[i]) delete e;
+			adj[i].clear();
+		}
+	}
+	/******user interface******/
+	void add(int u, int v, int c, int d) {
+		Edge* e1 = new Edge(v, c, d);
+		Edge* e2 = new Edge(u, 0, -d);
+		e1->rev = e2; e2->rev = e1;
+		adj[u].push_back(e1);
+		adj[v].push_back(e2);
+	}
+	PII mcmf(int src, int dst, bool maxf) {
+		const int INF = INT_MAX/2;
+		int mc = 0, mf = 0;
+		while (true) {
+			VI par(V, -1), dist(V, INF);
+			vector<Edge*> path(V);
+			vector<bool> inQ(V);
+			queue<int> q;
+			
+			dist[src] = 0;
+			inQ[src] = true;
+			q.push(src);
+		
+			while (!q.empty()) {
+				int u = q.front(); q.pop();
+				inQ[u] = false;
+				
+				for (int i = 0; i < adj[u].size(); ++i) {
+					Edge* e = adj[u][i];
+					int v = e->to, nd = dist[u] + e->d;
+					if (e->r() > 0 && nd < dist[v]) {
+						dist[v] = nd; par[v] = u; path[v] = e;
+						if (inQ[v]) continue;
+						inQ[v] = true;
+						q.push(v);
+					}
+				}
+			}
+			if (par[dst] == -1) break;
+			int amt = INF;
+			for (int p = dst; p != src; p = par[p])
+				amt = min(amt, path[p]->r());
+
+			int cost = 0;
+			for (int p = dst; p != src; p = par[p]) {
+				path[p]->push(amt);
+				cost += amt * path[p]->d;
+			}
+			if (!maxf && cost > 0) break;
+			mc += cost;
+			mf += amt;
+		}
+		return PII(mc, mf);
+	}
+};
