@@ -1,0 +1,27 @@
+struct MatrixCalc {
+	int N; LL MOD;
+	MatrixCalc(int _N, LL _MOD) :
+		MOD(_MOD), N(_N) {}
+
+	VVL E() { // identity
+		VVL ret(N, VL(N));
+		for (int i = 0; i < N; ++i) ret[i][i] = 1;
+		return ret;
+	}
+	VVL mult(const VVL& A, const VVL& B) {
+		VVL ret(N, VL(N));
+		for (int i = 0; i < N; ++i)
+			for (int j = 0; j < N; ++j)
+				for (int k = 0; k < N; ++k) {
+					ret[i][j] += A[i][k] * B[k][j];
+					ret[i][j] %= MOD;
+				}
+		return ret;
+	}
+	VVL pow(const VVL& A, int p) {
+		if (p == 0) return E();
+		if (p&1) return mult(A, pow(A, p-1));
+		VVL B = pow(A, p>>1);
+		return mult(B, B);
+	}
+};
