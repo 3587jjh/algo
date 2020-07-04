@@ -1,4 +1,4 @@
-namespace matrix {
+struct MatrixCalc {
 	int N; LL MOD;
 	MatrixCalc(int _N, LL _MOD) :
 		MOD(_MOD), N(_N) {}
@@ -24,4 +24,4 @@ namespace matrix {
 		VVL B = pow(A, p>>1);
 		return mult(B, B);
 	}
-}
+};
