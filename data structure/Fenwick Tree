@@ -1,0 +1,30 @@
+struct FenTree {
+	int n;
+	VL A; // 1-based
+	VL tree;
+
+	FenTree(const VL& _A) {
+		assert(!_A.empty());
+		n = _A.size()-1;
+		A.resize(n+1);
+		tree.resize(n+1);
+		for (int i = 1; i <= n; ++i)
+			update(i, _A[i], false);
+	}
+	LL sum(int pos) {
+		LL ret = 0;
+		for (int p = pos; p > 0; p -= (p & -p))
+			ret += tree[p];
+		return ret;
+	}
+	/******user interface******/
+	void update(int pos, LL val, bool add) {
+		LL diff = add ? val : val-A[pos];
+		A[pos] = val;
+		for (int p = pos; p <= n; p += (p & -p))
+			tree[p] += diff;
+	}
+	LL rsum(int l, int r) {
+		return sum(r) - sum(l-1);
+	}
+};
