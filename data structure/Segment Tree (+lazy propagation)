@@ -48,8 +48,8 @@ struct SegTree {
 			return tree[node];
 		}
 		int nm = (nl+nr)/2;
-		return tree[node] = merge(update(l, r, node*2, nl, nm),
-			update(l, r, node*2+1, nm+1, nr));
+		return tree[node] = merge(update(l, r, val, node*2, nl, nm),
+			update(l, r, val, node*2+1, nm+1, nr));
 	}
 	/******user interface******/
 	// fill "/**write**/" before use
