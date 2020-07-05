@@ -25,8 +25,8 @@ struct SegTree {
 	void propagate(int node, int nl, int nr) {
 		if (lazy[node] == 0) return;
 		if (nl < nr) {
-		    /**write**/ //lazy[node * 2] += lazy[node];
-		    /**write**/ //lazy[node * 2 + 1] += lazy[node];
+		    /**write**/ //lazy[node*2] += lazy[node];
+		    /**write**/ //lazy[node*2+1] += lazy[node];
 		}
 		/**write**/ //tree[node] += (nr-nl+1) * lazy[node];
 		lazy[node] = 0;
@@ -41,15 +41,15 @@ struct SegTree {
 	}
 	T update(int l, int r, LL val, int node, int nl, int nr) {
 		propagate(node, nl, nr);
-		if (pos < nl || nr < pos) return tree[node];
+		if (r < nl || nr < l) return tree[node];
 		if (nl == nr) {
 			/**write**/ //lazy[node] += val;
 			propagate(node, nl, nr);
 			return tree[node];
 		}
 		int nm = (nl+nr)/2;
-		return tree[node] = merge(update(pos, node*2, nl, nm),
-			update(pos, node*2+1, nm+1, nr));
+		return tree[node] = merge(update(l, r, node*2, nl, nm),
+			update(l, r, node*2+1, nm+1, nr));
 	}
 	/******user interface******/
 	// fill "/**write**/" before use
