@@ -114,3 +114,40 @@ double segToSeg(VT a, VT b, VT c, VT d) {
 	return min({pointToSeg(a, c, d), pointToSeg(b, c, d),
 		pointToSeg(c, a, b), pointToSeg(d, a, b)});
 }
+
+// 다각형 p의 넓이를 반환
+double area(const vector<VT>& p) {
+	double ret = 0;
+	for (int i = 0; i < p.size(); ++i) {
+		int j = (i+1)%p.size();
+		ret += p[i].cross(p[j]);
+	}
+	return fabs(ret) / 2;
+}
+
+// 점 q가 다각형 p의 경계에 위치하는지 여부를 반환
+bool onBound(const vector<VT>& p, VT q) {
+	for (int i = 0; i < p.size(); ++i) {
+		int j = (i+1)%p.size();
+		if (equal(ccw(q, p[i], p[j]), 0) && 
+			inRange(q, p[i], p[j]))
+			return true;
+	}
+	return false;
+}
+
+// 점 q가 다각형 p의 내부에 있는지 외부에 있는지를 판별
+// q가 p의 경계에 없는 상태(=!onBound(p, q))를 가정
+bool inside(const vector<VT>& p, VT q) {
+    int cross = 0, n = p.size();
+    for (int i = 0; i < n; ++i) {
+        int j = (i+1)%n;
+        if ((!equal(p[i].y, q.y) && p[i].y > q.y) !=
+			(!equal(p[j].y, q.y) && p[j].y > q.y)) {
+			double atX = (q.y - p[i].y) * (p[j].x - p[i].x) /
+	            (p[j].y - p[i].y) + p[i].x;
+			if (q.x < atX) ++cross;	
+		}
+	}
+	return cross%2 > 0;
+}
