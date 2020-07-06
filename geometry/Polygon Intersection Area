@@ -33,7 +33,7 @@ double partialArea(const vector<VT>& p1, const vector<VT>& p2, double x1, double
 		double mx = (x1+x2) / 2;
 		double my = (ly[i]+ly[i+1]+ry[i]+ry[i+1]) / 4;
 		VT q(mx, my);
-		if (isInside(p1, q) && isInside(p2, q))
+		if (inside(p1, q) && inside(p2, q))
 			ret += (x2-x1)*(ly[i+1]-ly[i]+ry[i+1]-ry[i])/2;
 	}
 	return ret;
@@ -41,23 +41,21 @@ double partialArea(const vector<VT>& p1, const vector<VT>& p2, double x1, double
 // 두 다각형 p, q의 교집합 면적을 반환
 double intersectionArea(const vector<VT>& p, const vector<VT>& q) {
     vector<double> evx;
-	for (int i = 0; i < p1.size(); ++i) {
-		evx.push_back(p1[i].x);
-		for (int j = 0; j < p2.size(); ++j) {
-			evx.push_back(p2[j].x);
-			
+	for (int i = 0; i < p.size(); ++i) {
+		evx.push_back(p[i].x);
+		for (int j = 0; j < q.size(); ++j) {
+			evx.push_back(q[j].x);
 			VT c;
-			int ni = (i+1) % p1.size();
-			int nj = (j+1) % p2.size();
-			if (segIntersection(p1[i], p1[ni], p2[j], p2[nj], c))
+			int ni = (i+1)%p.size(), nj = (j+1)%q.size();
+			if (segIntersection(p[i], p[ni], q[j], q[nj], c))
 				evx.push_back(c.x);
 		}
 	}
-	sort(evx.begin(), evx.end());
-	evx.erase(unique(evx.begin(), evx.end()), evx.end());
+	sort(all(evx));
+	evx.erase(unique(all(evx)), evx.end());
 	
 	double ret = 0;
 	for (int i = 0; i+1 < evx.size(); ++i)
-		ret += partialArea(evx[i], evx[i+1]);
+		ret += partialArea(p, q, evx[i], evx[i+1]);
     return ret;
 }
