@@ -1,0 +1,31 @@
+// 직선 ab의 왼쪽 반평면과 다각형 p와의 교집합을 반환
+vector<VT> cutPoly(const vector<VT>& p, VT a, VT b) {
+	vector<VT> ret;
+	int n = p.size();
+	vector<bool> in(n);
+	for (int i = 0; i < n; ++i) {
+		double val = ccw(a, b, p[i]);
+		in[i] = equal(val, 0) || val > 0;
+	}
+	for (int i = 0; i < n; ++i) {
+		int j = (i+1)%n;
+		if (in[i]) ret.push_back(p[i]);
+		if (in[i] != in[j]) {
+			VT cross;
+			assert(lineIntersection(a, b, p[i], p[j], cross));
+			ret.push_back(cross);
+		}
+	}
+	return ret;
+}
+// Sutherland-Hodgman Algorithm
+// 볼록 다각형 p와 나머지 다각형 q의 교집합을 반환
+// 주의: p와 q는 반시계 방향이어야함
+vector<VT> polyIntersection(const vector<VT>& p, const vector<VT>& q) {
+    vector<VT> ret = q;
+    for (int i = 0; i < p.size(); ++i) {
+        int j = (i+1)%p.size();
+        ret = cutPoly(ret, p[i], p[j]);
+    }
+    return ret;
+}
