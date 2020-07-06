@@ -49,3 +49,68 @@ struct VT {
 double ccw(VT a, VT b, VT c) {
     return (b-a).cross(c-a);
 }
+
+// 점 p,a,b가 일직선상에 있을 때 p가 [a, b]에 있는지 본다
+bool inRange(VT p, VT a, VT b) {
+    if (b < a) swap(a, b);
+    return a <= p && p <= b;
+}
+
+// ab를 포함하는 직선과 cd를 포함하는 직선의 교점을 구해 x에 저장
+// 교점이 존재하면 참, 존재하지 않으면(평행/겹침) 거짓을 반환
+bool lineIntersection(VT a, VT b, VT c, VT d, VT& x) {
+    double det = (b-a).cross(d-c);
+    if (equal(det, 0)) return false;
+    x = a + (b-a) * ((c-a).cross(d-c) / det);
+    return true;
+}
+
+// ab선분과 cd선분이 겹치는지 여부를 반환
+bool segIntersect(VT a, VT b, VT c, VT d) {
+    double ab = ccw(a, b, c) * ccw(a, b, d);
+    double cd = ccw(c, d, a) * ccw(c, d, b);
+    // 두 선분이 한 직선 위에 있거나 끝 점이 겹치는 경우
+    if (equal(ab, 0) && equal(cd, 0)) {
+        if (b < a) swap(a, b); 
+        if (d < c) swap(c, d);
+        return !(d < a || b < c);
+    }
+    // 선분에 다른 선분이 접촉한 경우도 고려
+    return (equal(ab, 0) || ab < 0) && 
+        (equal(cd, 0) || cd < 0);
+}
+
+// ab선분과 cd선분이 겹치는지 여부를 반환
+// 겹치는 경우 교점(무한개면 임의의 교점)을 x에 저장 
+bool segIntersection(VT a, VT b, VT c, VT d, VT& x) {
+    if (lineIntersection(a, b, c, d, x))
+        return inRange(x, a, b) && inRange(x, c, d);
+    if (b < a) swap(a, b); if (d < c) swap(c, d);
+    if (!equal(ccw(a, b, c), 0) || d < a || b < c) return false;
+    if (a < c) x = c; else x = a;
+    return true;
+}
+
+// 점 p에서 ab직선에 내린 수선의 발을 반환
+VT foot(VT p, VT a, VT b) {
+    return a + (p-a).project(b-a);
+}
+
+// 점 p에서 ab직선까지의 최소 거리를 반환
+double pointToLine(VT p, VT a, VT b) {
+    return (p-foot(p, a, b)).norm();
+}
+
+// 점 p에서 ab선분까지의 최소 거리를 반환
+double pointToSeg(VT p, VT a, VT b) {
+	VT h = foot(p, a, b);
+	if (inRange(h, a, b)) return (p-h).norm();
+	return min((p-a).norm(), (p-b).norm());
+}
+
+// ab선분에서 cd선분까지의 최소 거리를 반환
+double segToSeg(VT a, VT b, VT c, VT d) {
+	if (segIntersect(a, b, c, d)) return 0.0;
+	return min({pointToSeg(a, c, d), pointToSeg(b, c, d),
+		pointToSeg(c, a, b), pointToSeg(d, a, b)});
+}
