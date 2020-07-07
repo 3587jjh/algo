@@ -26,7 +26,7 @@ struct SegTree {
 		return merge(query(l, r, node*2, nl, nm),
 			query(l, r, node*2+1, nm+1, nr));
 	}
-	T update(int pos, int node, int nl, int nr) {
+	T update(int pos, LL val, int node, int nl, int nr) {
 		if (pos < nl || nr < pos) return tree[node];
 		if (nl == nr) {
 			/**write**/
@@ -43,8 +43,7 @@ struct SegTree {
 		return query(l, r, 1, 1, n);
 	}
 	void update(int pos, LL val, bool add) {
-		if (add) A[pos] += val;
-		else A[pos] = val;
-		update(pos, 1, 1, n);
+		if (add) val += A[pos];
+		update(pos, val, 1, 1, n);
 	}
 };
