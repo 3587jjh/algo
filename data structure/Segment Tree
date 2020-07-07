@@ -42,8 +42,8 @@ struct SegTree {
 	T query(int l, int r) {
 		return query(l, r, 1, 1, n);
 	}
-	void update(int pos, LL val, bool add) {
-		if (add) val += A[pos];
+	void update(int pos, LL val) { 
+		// val = A[pos]의 새로운 값
 		update(pos, val, 1, 1, n);
 	}
 };
