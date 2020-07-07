@@ -22,6 +22,6 @@ struct FenTree {
 	void update(int pos, LL val) {
 		// val = A[pos]의 새로운 값
 		for (int p = pos; p <= n; p += (p & -p))
-			tree[p] = merge(tree[p], /**write**/)
+			tree[p] = merge(tree[p], /**write**/);
 	}
 };
