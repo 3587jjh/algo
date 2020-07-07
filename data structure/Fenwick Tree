@@ -1,9 +1,10 @@
-
+template <typename T>
 struct FenTree {
 	int n;
 	VL A; // 1-based
-	VL tree;
+	vector<T> tree;
 
+	FenTree():n(0) {}
 	FenTree(const VL& _A) {
 		assert(!_A.empty());
 		n = _A.size()-1;
