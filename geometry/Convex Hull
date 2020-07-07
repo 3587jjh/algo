@@ -1,0 +1,27 @@
+struct Comparator {
+	VT pivot;
+	Comparator(VT _pivot):pivot(_pivot){}
+	bool operator ()(VT a, VT b) {
+		double det = ccw(pivot, a, b);
+		if (!equal(det, 0)) return det > 0;
+		return (a-pivot).norm() < (b-pivot).norm();
+	}
+};
+// 점들의 집합 pt가 주어졌을 때 볼록 껍질(반시계 방향)을 반환
+vector<VT> grahamScan(vector<VT>& pt) {
+	VT pivot = *min_element(pt.begin(), pt.end());
+	sort(all(pt), Comparator(pivot));
+	vector<VT> ret;
+	
+	for (int i = 0; i < pt.size(); ++i) {
+		while (ret.size() >= 2) {
+			VT a = ret[ret.size()-2];
+			VT b = ret[ret.size()-1];
+			double det = ccw(a, b, pt[i]);
+			if (!equal(det, 0) && det > 0) break;
+			ret.pop_back();
+		}
+		ret.push_back(pt[i]);
+	}
+	return ret;
+}
