@@ -1,3 +1,4 @@
+
 struct FenTree {
 	int n;
 	VL A; // 1-based
@@ -11,20 +12,18 @@ struct FenTree {
 		for (int i = 1; i <= n; ++i)
 			update(i, _A[i], false);
 	}
+	/******user interface******/
+	
 	LL sum(int pos) {
 		LL ret = 0;
 		for (int p = pos; p > 0; p -= (p & -p))
 			ret += tree[p];
 		return ret;
 	}
-	/******user interface******/
 	void update(int pos, LL val, bool add) {
 		LL diff = add ? val : val-A[pos];
 		A[pos] = val;
 		for (int p = pos; p <= n; p += (p & -p))
 			tree[p] += diff;
-	}
-	LL rsum(int l, int r) {
-		return sum(r) - sum(l-1);
 	}
 };
