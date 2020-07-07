@@ -1,0 +1,21 @@
+// 볼록 다각형 p에 캘리퍼스를 돌린다 (p는 반시계라고 가정)
+void calipers(const vector<VT>& p) {
+	if (p.size() <= 1) return;
+	int n = p.size();
+	vector<VT> toNext(n);
+	for (int i = 0; i < n; ++i) {
+		int j = (i+1)%n;
+		toNext[i] = (p[j]-p[i]).normalize(); 
+	}
+	int l = min_element(all(p)) - p.begin();
+	int r = max_element(all(p)) - p.begin();
+	int a = r, b = l; VT dir(0, 1);
+	
+	while (a != l || b != r) {
+		double val1 = dir.dot(toNext[a]);
+		double val2 = -dir.dot(toNext[b]);
+		if (val1 > val2) dir = toNext[a], a = (a+1)%n;
+		else dir = -toNext[b], b = (b+1)%n;
+		/**do something**/
+	}
+}
