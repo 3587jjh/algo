@@ -24,6 +24,9 @@ struct VT {
 	VT operator -(const VT& rhs) const {
 		return VT(x - rhs.x, y - rhs.y);
 	}
+	VT operator -() const {
+		return VT(-x, -y);
+	}
 	VT operator *(double rhs) const {
 		return VT(x * rhs, y * rhs);
 	}
