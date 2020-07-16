@@ -48,7 +48,6 @@ struct BiMatch {
 	int mch; // max match
 	VI ca, cb; // minimum vertex cover of A, B
 	VI sa, sb; // maximum independent set of A, B
-
 	// (Au → Bv) 간선 정보 추가 (1-based)
 	void add(int u, int v) {
 		adj[u].push_back(v);
