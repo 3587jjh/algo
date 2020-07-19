@@ -20,7 +20,6 @@ struct FenTree {
 		return ret;
 	}
 	void update(int pos, LL val) {
-		// val = 더하는 값
 		for (int p = pos; p <= n; p += (p & -p))
 			tree[p] = merge(tree[p], /**write**/);
 	}
