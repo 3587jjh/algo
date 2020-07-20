@@ -42,7 +42,7 @@ struct SegTree {
 	T update(int l, int r, LL val, int node, int nl, int nr) {
 		propagate(node, nl, nr);
 		if (r < nl || nr < l) return tree[node];
-		if (nl == nr) {
+		if (l <= nl && nr <= r) {
 			/**write**/ //lazy[node] += val;
 			propagate(node, nl, nr);
 			return tree[node];
