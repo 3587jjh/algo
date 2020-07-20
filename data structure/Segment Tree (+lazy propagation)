@@ -25,10 +25,10 @@ struct SegTree {
 	void propagate(int node, int nl, int nr) {
 		if (lazy[node] == 0) return;
 		if (nl < nr) {
-		    /**write**/ //lazy[node*2] += lazy[node];
-		    /**write**/ //lazy[node*2+1] += lazy[node];
+		    //lazy[node*2] += lazy[node];
+		    //lazy[node*2+1] += lazy[node];
 		}
-		/**write**/ //tree[node] += (nr-nl+1) * lazy[node];
+		//tree[node] += (nr-nl+1) * lazy[node];
 		lazy[node] = 0;
 	}
 	T query(int l, int r, int node, int nl, int nr) {
