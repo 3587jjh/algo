@@ -1,20 +1,15 @@
 // pi[i] = t[...i]의 접미사도 되고 접두사도 되는 문자열의 최대 길이
 VI getPi(const string& t) {
     VI pi(t.size(), 0);
-    int begin = 1, mch = 0;
+    int mch = 0, i = 1;
 
-    while (begin + mch < t.size()) {
-        if (t[mch] == t[begin + mch]) {
-            ++mch;
-            pi[begin + mch - 1] = mch;
+    while (i < t.size()) {
+        if (mch < t.size() && t[i] == t[mch]) {
+            ++mch; ++i;
+            pi[i-1] = mch;
         }
-        else {
-            if (!mch) ++begin;
-            else {
-                begin += mch - pi[mch - 1];
-                mch = pi[mch - 1];
-            }
-        }
+        else if (mch) mch = pi[mch-1];
+        else ++i;
     }
     return pi;
 }
@@ -33,5 +28,4 @@ void kmp(const string& s, const string& t) {
         else if (mch) mch = pi[mch-1];
         else ++i;
     }
-    return ret;
 }
