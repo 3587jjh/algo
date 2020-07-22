@@ -21,23 +21,17 @@ VI getPi(const string& t) {
 
 void kmp(const string& s, const string& t) {
     VI pi = getPi(t);
-    int begin = 0, mch = 0;
-	
-    for (int i = 0; i < s.size(); ++i) {
-        while (begin + mch == i) {
-            if (mch < t.size() && t[mch] == s[i]) {
-                ++mch;
-                if (mch == t.size()) {
-                    // do something
-                }
-            }
-            else {
-                if (!mch) ++begin;
-                else {
-                    begin += mch - pi[mch - 1];
-                    mch = pi[mch - 1];
-                }
+    int mch = 0, i = 0;
+
+    while (i < s.size()) {
+        if (mch < t.size() && s[i] == t[mch]) {
+            ++mch; ++i;
+            if (mch == t.size()) {
+                // do something
             }
         }
+        else if (mch) mch = pi[mch-1];
+        else ++i;
     }
+    return ret;
 }
