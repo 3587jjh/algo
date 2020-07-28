@@ -1,0 +1,51 @@
+struct HLD {
+	int n, dn;
+	VI in, out, par, sz, dep, top;
+	VVI adj;
+
+	HLD(int _n=0) : n(_n), dn(1) { // 1-based
+		in=out=par=sz=dep=top=VI(n+1);
+		adj.resize(n+1);
+	}
+	void dfs(int u) {
+		sz[u] = 1;
+		for (auto& v : adj[u]) {
+			if (v == par[u]) continue;
+			par[v] = u; dep[v] = dep[u]+1;
+			dfs(v); sz[u] += sz[v];
+
+			int& hv = adj[u][0];
+			if (hv == par[u] || sz[hv] < sz[v])
+				swap(hv, v);
+		}
+	}
+	void hld(int u) {
+		in[u] = dn++;
+		int hv = adj[u][0];
+		for (auto v : adj[u]) {
+			if (v == par[u]) continue;
+			top[v] = (v == hv ? top[u] : v);
+			hld(v);
+		}
+		out[u] = dn;
+	}
+	/******user interface******/
+	void add(int u, int v) {
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+	void build(int root) {
+		par[root] = top[root] = root;
+		dfs(root); hld(root);
+	}
+	void lca(int u, int v) {
+		while (top[u] != top[v]) {
+			if (dep[top[u]] > dep[top[v]]) swap(u, v);
+			// do something [in[top[v]], in[v]]
+			v = par[top[v]];
+		}
+		if (dep[u] > dep[v]) swap(u, v);
+		// do something [in[u], in[v]]
+		// lca = u
+	}
+};
