@@ -3,7 +3,7 @@ bool equal(double a, double b) {
 	if (diff < 1e-10) return true;
 	return diff < 1e-8 * max(fabs(a), fabs(b));
 }
-// 행렬 A를 RREF로 바꾸고 각 행의 leading entry의 
+// 행렬 A를 RREF로 바꾸고 각 행의 leading entry의 위치를 반환
 VI makeRREF(vector<vector<double>>& A) {
 	int n = A.size(), m = A[0].size();
 	VI entry(n, -1);
