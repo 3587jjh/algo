@@ -1,7 +1,7 @@
 struct BiMatch {
 	int n, m, sz;
-	VVI adj;
-	VI matchAB, matchBA;
+	vector<vector<int>> adj;
+	vector<int> matchAB, matchBA;
 	vector<bool> chk, XA, XB;
 
 	BiMatch(int _n, int _m) {
@@ -24,7 +24,7 @@ struct BiMatch {
 	}
 	void maxMatch() {
 		mch = 0;
-		matchAB = matchBA = VI(sz, -1);
+		matchAB = matchBA = vector<int>(sz, -1);
 		for (int a = 1; a <= n; ++a) {
 			chk = vector<bool>(sz);
 			if (dfs(a)) ++mch;
@@ -32,22 +32,22 @@ struct BiMatch {
 	}
 	void trace(int u, bool left) {
 		if (left) {
-		    XA[u] = true;
-		    for (int v : adj[u])
-		        if (matchAB[u] != v && !XB[v])
-		            trace(v, false);
+			XA[u] = true;
+			for (int v : adj[u])
+				if (matchAB[u] != v && !XB[v])
+					trace(v, false);
 		} 
 		else {
-		    XB[u] = true;
-		    int v = matchBA[u];
-		    if (v != -1 && !XA[v])
-		        trace(v, true);
+			XB[u] = true;
+			int v = matchBA[u];
+			if (v != -1 && !XA[v])
+				trace(v, true);
 		}
 	}
 	/******user interface******/
 	int mch; // max match
-	VI ca, cb; // minimum vertex cover of A, B
-	VI sa, sb; // maximum independent set of A, B
+	vector<int> ca, cb; // minimum vertex cover of A, B
+	vector<int> sa, sb; // maximum independent set of A, B
 	// (Au → Bv) 간선 정보 추가 (1-based)
 	void add(int u, int v) {
 		adj[u].push_back(v);
