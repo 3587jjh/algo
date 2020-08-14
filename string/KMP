@@ -1,31 +1,30 @@
-// pi[i] = t[...i]의 접미사도 되고 접두사도 되는 문자열의 최대 길이
-VI getPi(const string& t) {
-    VI pi(t.size(), 0);
-    int mch = 0, i = 1;
+vector<int> getPi(const string& t) {
+  vector<int> pi(t.size(), 0);
+  int mch = 0, i = 1;
 
-    while (i < t.size()) {
-        if (mch < t.size() && t[i] == t[mch]) {
-            ++mch; ++i;
-            pi[i-1] = mch;
-        }
-        else if (mch) mch = pi[mch-1];
-        else ++i;
+  while (i < t.size()) {
+    if (mch < t.size() && t[i] == t[mch]) {
+      ++mch; ++i;
+      pi[i-1] = mch;
     }
-    return pi;
+    else if (mch) mch = pi[mch-1];
+    else ++i;
+  }
+  return pi;
 }
 
 void kmp(const string& s, const string& t) {
-    VI pi = getPi(t);
-    int mch = 0, i = 0;
+  vector<int> pi = getPi(t);
+  int mch = 0, i = 0;
 
-    while (i < s.size()) {
-        if (mch < t.size() && s[i] == t[mch]) {
-            ++mch; ++i;
-            if (mch == t.size()) {
-                // do something
-            }
-        }
-        else if (mch) mch = pi[mch-1];
-        else ++i;
+  while (i < s.size()) {
+    if (mch < t.size() && s[i] == t[mch]) {
+      ++mch; ++i;
+      if (mch == t.size()) {
+        // do something
+      }
     }
+    else if (mch) mch = pi[mch-1];
+    else ++i;
+  }
 }
