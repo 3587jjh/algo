@@ -1,7 +1,7 @@
 typedef complex<double> Complex;
 const double PI = 2.0 * acos(0.0);
 struct BigInt { // for positive inly
-	VI v; // reversed
+	vector<int> v; // reversed
 	BigInt() {}
 	BigInt(const string& str) {
 		int n = str.size();
@@ -50,7 +50,7 @@ struct BigInt { // for positive inly
 			powW *= w; 
 		}
 	}
-	VI multiply(const VI& a, const VI& b) const {
+	vector<int> multiply(const vector<int>& a, const vector<int>& b) const {
 		int n = roundUp(max(a.size(), b.size())) * 2;
 		vector<Complex> ac(a.begin(), a.end());
 		vector<Complex> bc(b.begin(), b.end());
@@ -63,7 +63,7 @@ struct BigInt { // for positive inly
 		for (int i = 0; i < n; ++i) ac[i] *= bc[i];
 		dft(ac, polar(1.0, -2 * PI / n));
 
-		VI ret(n);
+		vector<int> ret(n);
 		for (int i = 0; i < n; ++i)
 			ret[i] = round((ac[i] / (double)n).real());
 		return ret;
