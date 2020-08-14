@@ -1,8 +1,8 @@
 struct AhoCorasick {
 	vector<map<int, int>> trie;
 	int nid;
-	VI fail, term;
-	VVI out;
+	vector<int> fail, term;
+	vector<vector<int>> out;
 
 	AhoCorasick() : nid(1) {
 		trie.push_back(map<int, int>());
@@ -18,7 +18,7 @@ struct AhoCorasick {
 			x = trie[x][ch];
 		}
 		term.resize(nid);
-	    term[x] = sid;
+		term[x] = sid;
 	}
 	void calcFail() { // no more insert from now
 		fail.resize(nid);
@@ -32,7 +32,7 @@ struct AhoCorasick {
 				int e = it.fst, y = it.snd, t = fail[x];
 				while (t && !trie[t].count(e)) t = fail[t];
 				if (x && trie[t].count(e)) t = trie[t][e];
-            
+
 				fail[y] = t;
 				out[y] = out[t];
 				if (term[y]) out[y].push_back(term[y]);
@@ -40,16 +40,16 @@ struct AhoCorasick {
 			}
 		}
 	}
-	VII findFrom(const string& s) {
-		VII ret; // (s에서 끝나는 위치, sid) 모음
+	vector<PII> findFrom(const string& s) {
+		vector<PII> ret; // (s에서 끝나는 위치, sid) 모음
 		int cur = 0;
 
 		for (int i = 0; i < s.size(); ++i) {
 			char e = s[i];
-    		while (cur && !trie[cur].count(e)) cur = fail[cur];
-    		if (trie[cur].count(e)) cur = trie[cur][e];
+			while (cur && !trie[cur].count(e)) cur = fail[cur];
+			if (trie[cur].count(e)) cur = trie[cur][e];
 			for (auto it : out[cur])
-    			ret.push_back({i, it});
+				ret.push_back({i, it});
 		}
 		return ret;
 	}
