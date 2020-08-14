@@ -1,10 +1,10 @@
 struct HLD {
 	int n, dn;
-	VI in, out, par, sz, dep, top;
-	VVI adj;
+	vector<int> in, out, par, sz, dep, top;
+	vector<vector<int>> adj;
 
 	HLD(int _n=0) : n(_n), dn(1) { // 1-based
-		in=out=par=sz=dep=top=VI(n+1);
+		in=out=par=sz=dep=top=vector<int>(n+1);
 		adj.resize(n+1);
 	}
 	void dfs(int u) {
