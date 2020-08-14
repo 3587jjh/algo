@@ -8,7 +8,7 @@ struct Dinic {
 		void push(int _f) {f+=_f; rev->f-=_f;}
 	};
 	int MAXV;
-	VI lv, work;
+	vector<int> lv, work;
 	vector<vector<Edge*>> adj;
 
 	Dinic(int _MAXV=0) {
@@ -17,17 +17,17 @@ struct Dinic {
 	}
 	~Dinic() {
 		for (int i = 0; i < MAXV; ++i) {
-        		for (Edge* e : adj[i]) delete e;
-        		adj[i].clear();
-        	}
+			for (Edge* e : adj[i]) delete e;
+			adj[i].clear();
+		}
 	}
 
 	bool bfs(int src, int dst) {
-		lv = VI(MAXV, -1);
+		lv = vector<int>(MAXV, -1);
 		queue<int> q;
 		lv[src] = 0;
 		q.push(src);
-	
+
 		while (!q.empty()) {
 			int u = q.front(); q.pop();
 			for (Edge* e : adj[u]) {
@@ -45,7 +45,7 @@ struct Dinic {
 		for (int& i = work[u]; i < adj[u].size(); ++i) {
 			Edge* e = adj[u][i];
 			int v = e->to;
-		
+
 			if (lv[v] == lv[u]+1 && e->r()) {
 				int amt = dfs(v, dst, min(bound, e->r()));
 				if (amt > 0) {
@@ -58,16 +58,16 @@ struct Dinic {
 	} 
 	/******user interface******/
 	void add(int u, int v, int c) {
-	    Edge* e1 = new Edge(v, c);
-	    Edge* e2 = new Edge(u, 0);
-	    e1->rev = e2; e2->rev = e1;
-	    adj[u].push_back(e1);
-	    adj[v].push_back(e2);
+		Edge* e1 = new Edge(v, c);
+		Edge* e2 = new Edge(u, 0);
+		e1->rev = e2; e2->rev = e1;
+		adj[u].push_back(e1);
+		adj[v].push_back(e2);
 	}
 	int maxFlow(int src, int dst) {
 		int ret = 0;
 		while (bfs(src, dst)) {
-			work = VI(MAXV, 0);
+			work = vector<int>(MAXV, 0);
 			while (true) {
 				int amt = dfs(src, dst, INT_MAX);
 				if (!amt) break;
