@@ -31,19 +31,19 @@ struct MCMF {
 		const int INF = INT_MAX/2;
 		int mc = 0, mf = 0;
 		while (true) {
-			VI par(V, -1), dist(V, INF);
+			vector<int> par(V, -1), dist(V, INF);
 			vector<Edge*> path(V);
 			vector<bool> inQ(V);
 			queue<int> q;
-			
+
 			dist[src] = 0;
 			inQ[src] = true;
 			q.push(src);
-		
+
 			while (!q.empty()) {
 				int u = q.front(); q.pop();
 				inQ[u] = false;
-				
+
 				for (int i = 0; i < adj[u].size(); ++i) {
 					Edge* e = adj[u][i];
 					int v = e->to, nd = dist[u] + e->d;
