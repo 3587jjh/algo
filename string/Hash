@@ -1,0 +1,23 @@
+struct Hash {
+	string s; int MAX;
+	const ULL R = 1e9+3; // can modify
+	vector<ULL> powR, h;
+
+	Hash(const string _s, int _MAX) : s(_s), MAX(_MAX) {
+		// MAX = 부분 문자열의 최대 차수로 통일시킬 값
+		powR.resize(MAX+1);
+		powR[0] = 1;
+		for (int i = 1; i <= MAX; ++i) {
+			powR[i] = powR[i-1]*R;
+		}
+		int n = s.size();
+		h.resize(n+1);
+		for (int i = 1; i <= n; ++i) {
+			h[i] = h[i-1] + s[i-1]*powR[i];
+		}
+	}
+	/******user interface******/
+	ULL getval(int l, int r) { // 1-based
+		return (h[r]-h[l-1])*powR[MAX-r];
+	}
+};
