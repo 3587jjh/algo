@@ -12,7 +12,7 @@ vector<VT> grahamScan(vector<VT>& pt) {
 	VT pivot = *min_element(pt.begin(), pt.end());
 	sort(all(pt), Comparator(pivot));
 	vector<VT> ret;
-	
+
 	for (int i = 0; i < pt.size(); ++i) {
 		while (ret.size() >= 2) {
 			VT a = ret[ret.size()-2];
