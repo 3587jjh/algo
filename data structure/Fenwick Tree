@@ -1,25 +1,25 @@
 // 펜윅 트리 구간 합 예시
 struct FenTree {
 	int n;
-	vector<LL> A; // 1-based
-	vector<LL> tree;
+	vector<int> A; // 1-based
+	vector<int> tree;
 
 	FenTree():n(0) {}
-	FenTree(const vector<LL>& _A) {
+	FenTree(const vector<int>& _A) {
 		A = _A; assert(!A.empty());
 		n = (int)A.size()-1; tree.resize(n+1);
 		for (int i = 1; i <= n; ++i) {
 			update(i, A[i]);
 		}
 	}
-	LL query(int pos) {
-		LL ret = 0;
+	int query(int pos) {
+		int ret = 0;
 		for (int p = pos; p > 0; p -= (p & -p)) {
 			ret += tree[p];
 		}
 		return ret;
 	}
-	void update(int pos, LL val) {
+	void update(int pos, int val) {
 		for (int p = pos; p <= n; p += (p & -p)) {
 			tree[p] += val;
 		}
