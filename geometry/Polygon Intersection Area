@@ -5,7 +5,7 @@ bool inRange(double p, double a, double b) {
 }
 // 구간 [x1, x2]에 의해 다각형 p1,p2의 교집합이 잘리는 부분의 사다리꼴 넓이 합을 반환
 double partialArea(const vector<VT>& p1, const vector<VT>& p2, double x1, double x2) {
-    vector<double> ly, ry; VT c;
+	vector<double> ly, ry; VT c;
 	for (int i = 0; i < p1.size(); ++i) {
 		int j = (i+1) % p1.size();
 		if (inRange(x1,p1[i].x,p1[j].x)&&inRange(x2,p1[i].x,p1[j].x)){
@@ -27,7 +27,7 @@ double partialArea(const vector<VT>& p1, const vector<VT>& p2, double x1, double
 	sort(ly.begin(), ly.end());
 	sort(ry.begin(), ry.end());
 	assert(ly.size() == ry.size());
-	
+
 	double ret = 0;
 	for (int i = 0; i+1 < ly.size(); ++i) {
 		double mx = (x1+x2) / 2;
@@ -40,7 +40,7 @@ double partialArea(const vector<VT>& p1, const vector<VT>& p2, double x1, double
 }
 // 두 다각형 p, q의 교집합 면적을 반환
 double intersectionArea(const vector<VT>& p, const vector<VT>& q) {
-    vector<double> evx;
+	vector<double> evx;
 	for (int i = 0; i < p.size(); ++i) {
 		evx.push_back(p[i].x);
 		for (int j = 0; j < q.size(); ++j) {
@@ -53,9 +53,9 @@ double intersectionArea(const vector<VT>& p, const vector<VT>& q) {
 	}
 	sort(all(evx));
 	evx.erase(unique(all(evx)), evx.end());
-	
+
 	double ret = 0;
 	for (int i = 0; i+1 < evx.size(); ++i)
 		ret += partialArea(p, q, evx[i], evx[i+1]);
-    return ret;
+	return ret;
 }
