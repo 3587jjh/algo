@@ -1,11 +1,11 @@
 template <typename T>
 struct SegTree {
 	int n;
-	vector<LL> A; // 1-based
+	vector<int> A; // 1-based
 	vector<T> tree;
 
 	SegTree():n(0) {}
-	SegTree(const VL& _A) {
+	SegTree(const vector<int>& _A) {
 		assert(!_A.empty()); A = _A;
 		n = A.size()-1; tree.resize(4*A.size());
 		init(1, 1, n);
@@ -20,18 +20,15 @@ struct SegTree {
 			init(node*2+1, nm+1, nr));
 	}
 	T query(int l, int r, int node, int nl, int nr) {
-		if (r < nl || nr < l) return /**write**/
-			if (l <= nl && nr <= r) return tree[node];
+		if (r < nl || nr < l) return /**write**/;
+		if (l <= nl && nr <= r) return tree[node];
 		int nm = (nl+nr)/2;
 		return merge(query(l, r, node*2, nl, nm),
 			query(l, r, node*2+1, nm+1, nr));
 	}
-	T update(int pos, LL val, int node, int nl, int nr) {
+	T update(int pos, int val, int node, int nl, int nr) {
 		if (pos < nl || nr < pos) return tree[node];
-		if (nl == nr) {
-			/**write**/
-			return tree[node];
-		}
+		if (nl == nr) return tree[node] = /**write**/;
 		int nm = (nl+nr)/2;
 		return tree[node] = merge(update(pos, val, node*2, nl, nm),
 			update(pos, val, node*2+1, nm+1, nr));
@@ -42,7 +39,7 @@ struct SegTree {
 	T query(int l, int r) {
 		return query(l, r, 1, 1, n);
 	}
-	void update(int pos, LL val) { 
+	void update(int pos, int val) { 
 		// val = A[pos]의 새로운 값
 		update(pos, val, 1, 1, n);
 	}
