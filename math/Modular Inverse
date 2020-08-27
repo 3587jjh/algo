@@ -21,11 +21,10 @@ namespace modcalc {
 	}
 	/******user interface******/
 	bool isPrime(ll M) {
-		if (M > INT_MAX) return false;
-		int sq = sqrt(M);
-		for (int i = 2; i <= sq; ++i)
-			if (M % i == 0)
-				return false;
+		int ed = sqrt(M);
+		for (int i = 2; i <= ed; ++i) {
+			if (M%i == 0) return false;
+		}
 		return true;
 	}
 	ll getInv(ll a, ll M) {
