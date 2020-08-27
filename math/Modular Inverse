@@ -29,6 +29,7 @@ namespace modcalc {
 		return true;
 	}
 	ll getInv(ll a, ll M) {
+		if (a >= M) a %= M;
 		//if (isPrime(M)) return pow(a, M-2, M);
 		//else return modInv(a, M);
 		return pow(a, M-2, M);
