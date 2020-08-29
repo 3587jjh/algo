@@ -3,23 +3,25 @@ template <typename T>
 struct Treap {
 	struct Node {
 		T key;
-		int pr, sz;
+		int pr, size;
 		Node* l; Node* r;
-	
+		
 		Node(T _key):key(_key),pr(rand()),
-			sz(1),l(0),r(0){}
-	
+			size(1),l(0),r(0){}
+			
+		
 		void calcSz() {
-			sz = 1;
-			if (l) sz += l->sz;
-			if (r) sz += r->sz;
+			size = 1;
+			if (l) size += l->size;
+			if (r) size += r->size;
 		}
 		void setL(Node* node) {l=node; calcSz();}
 		void setR(Node* node) {r=node; calcSz();}
+		
 	};
 	typedef pair<Node*, Node*> NodePair;
 	Node* root;
-	
+ 
 	Treap() {root = NULL;}
 	~Treap() {destroy(root);}
 	
@@ -82,20 +84,20 @@ struct Treap {
 		return root;
 	}
 	Node* findKth(Node *root, int kth) {
-		int sz = root->l ? root->l->sz : 0;
-		if (kth <= sz) return findKth(root->l, kth);
-		else if (kth == sz+1) return root;
-		else return findKth(root->r, kth-sz-1);
+		int size = root->l ? root->l->size : 0;
+		if (kth <= size) return findKth(root->l, kth);
+		else if (kth == size+1) return root;
+		else return findKth(root->r, kth-size-1);
 	}
 	int countLess(Node *root, T key) {
 		if (!root) return 0;
 		if (key <= root->key)
 			return countLess(root->l, key);
-		int sz = root->l ? root->l->sz : 0;
-		return sz+1 + countLess(root->r, key);
+		int size = root->l ? root->l->size : 0;
+		return size+1 + countLess(root->r, key);
 	}
 	/******user interface******/
-	int size() {return root ? root->sz : 0;}
+	int size() {return root ? root->size : 0;}
 	void insert(T key) {
 		root = insert(root, new Node(key));
 	}
