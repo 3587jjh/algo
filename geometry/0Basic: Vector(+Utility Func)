@@ -1,13 +1,18 @@
 const double PI = 2*acos(0.0);
-bool equal(double a, double b) {
-	double diff = fabs(a - b);
-	if (diff < 1e-10) return true;
-	return diff < 1e-8 * max(fabs(a), fabs(b));
+template <typename T>
+bool equal(T a, T b) {
+	if constexpr(is_same_v<T, double>) {
+		double diff = fabs(a-b);
+		if (diff < 1e-10) return true;
+		return diff < 1e-8 * max(fabs(a), fabs(b));
+	}
+	return a==b;
 }
 
+template <typename T>
 struct VT {
-	double x, y;
-	VT(double _x=0, double _y=0) : x(_x),y(_y){}
+	T x, y;
+	VT(T _x=0, T _y=0) : x(_x),y(_y){}
 	bool operator ==(const VT& rhs) const {
 		return equal(x, rhs.x) && equal(y, rhs.y);
 	}
@@ -19,120 +24,167 @@ struct VT {
 		return *this == rhs || *this < rhs;
 	}
 	VT operator +(const VT& rhs) const {
-		return VT(x + rhs.x, y + rhs.y);
+		return VT(x+rhs.x, y+rhs.y);
 	}
 	VT operator -(const VT& rhs) const {
-		return VT(x - rhs.x, y - rhs.y);
+		return VT(x-rhs.x, y-rhs.y);
 	}
 	VT operator -() const {
 		return VT(-x, -y);
 	}
-	VT operator *(double rhs) const {
-		return VT(x * rhs, y * rhs);
+	VT operator *(T rhs) const {
+		return VT(x*rhs, y*rhs);
 	}
-	double norm() const { return hypot(x, y); } // 벡터의 크기 반환
+	T norm() const { // 벡터의 크기 반환, 정수형의 경우 크기 제곱
+		if constexpr(is_same_v<T, double>) return hypot(x, y);
+		return sq(x)+sq(y);
+	}
 	VT normalize() const { // 현재 벡터의 방향을 갖는 단위벡터 반환
-		double p = norm();
-		if (equal(p, 0.0)) return *this;
-		return VT(x / p, y / p);
+		if (equal(norm(), (T)0)) return *this;
+		T div = 0;
+		if constexpr(is_same_v<T, double>) div = norm();
+		else div = gcd(x, y);
+		return VT(x/div, y/div);
 	}
-	double dot(const VT& rhs) const { // 내적
-		return x * rhs.x + y * rhs.y;
+	T dot(const VT& rhs) const { // 내적
+		return x*rhs.x + y*rhs.y;
 	}
-	double cross(const VT& rhs) const { // 외적
-		return x * rhs.y - y * rhs.x;
+	T cross(const VT& rhs) const { // 외적
+		return x*rhs.y - y*rhs.x;
 	}
+	// 현재 벡터를 rhs에 사영한 벡터를 반환
 	VT project(const VT& rhs) const {
-		// 현재 벡터를 rhs에 사영한 벡터를 반환
-		VT r = rhs.normalize();
-		return r * r.dot(*this);
+		if constexpr(is_same_v<T, double>) {
+			VT r = rhs.normalize();
+			return r * r.dot(*this);
+		}
+		else {assert(0); return VT(0, 0);}
 	}
 };
-
-double ccw(VT a, VT b, VT c) {
-	return (b-a).cross(c-a);
+template<typename T>
+ostream& operator <<(ostream& os, const VT<T>& p) {
+	os << p.x << ' ' << p.y; return os;
+}
+template<typename T>
+istream& operator >>(istream& is, VT<T>& p) {
+	is >> p.x >> p.y; return is;
 }
 
+template <typename T>
+T ccw(VT<T> a, VT<T> b, VT<T> c) {
+	return (b-a).cross(c-a);
+}
 // 점 p,a,b가 일직선상에 있을 때 p가 [a, b]에 있는지 본다
-bool inRange(VT p, VT a, VT b) {
+template <typename T>
+bool inRange(VT<T> p, VT<T> a, VT<T> b) {
 	if (b < a) swap(a, b);
 	return a <= p && p <= b;
 }
 
 // ab를 포함하는 직선과 cd를 포함하는 직선의 교점을 구해 x에 저장
 // 교점이 존재하면 참, 존재하지 않으면(평행/겹침) 거짓을 반환
-bool lineIntersection(VT a, VT b, VT c, VT d, VT& x) {
-	double det = (b-a).cross(d-c);
-	if (equal(det, 0)) return false;
-	x = a + (b-a) * ((c-a).cross(d-c) / det);
-	return true;
+template <typename T>
+bool lineIntersection(VT<T> a, VT<T> b, VT<T> c, VT<T> d, VT<T>& x) {
+	if constexpr(is_same_v<T, double>) {
+		double det = (b-a).cross(d-c);
+		if (equal(det, (T)0)) return false;
+		x = a + (b-a) * ((c-a).cross(d-c) / det);
+		return true;
+	}
+	else {assert(0); return false;}
 }
 
 // ab선분과 cd선분이 겹치는지 여부를 반환
-bool segIntersect(VT a, VT b, VT c, VT d) {
-	double ab = ccw(a, b, c) * ccw(a, b, d);
-	double cd = ccw(c, d, a) * ccw(c, d, b);
+template <typename T>
+bool segIntersect(VT<T> a, VT<T> b, VT<T> c, VT<T> d) {
+	T tmp1 = ccw(a, b, c), tmp2 = ccw(a, b, d);
+	T tmp3 = ccw(c, d, a), tmp4 = ccw(c, d, b);
+	T ab = 0, cd = 0;
+	if constexpr(is_same_v<T, double>) {
+		ab = tmp1*tmp2; cd = tmp3*tmp4;
+	}
+	else {
+		if (tmp1 != 0 && tmp2 != 0) {
+			tmp1 /= abs(tmp1); tmp2 /= abs(tmp2);
+			ab = tmp1*tmp2;
+		}
+		if (tmp3 != 0 && tmp4 != 0) {
+			tmp3 /= abs(tmp3); tmp4 /= abs(tmp4);
+			cd = tmp3*tmp4;
+		}
+	}
 	// 두 선분이 한 직선 위에 있거나 끝 점이 겹치는 경우
-	if (equal(ab, 0) && equal(cd, 0)) {
+	if (equal(ab, (T)0) && equal(cd, (T)0)) {
 		if (b < a) swap(a, b); 
 		if (d < c) swap(c, d);
 		return !(d < a || b < c);
 	}
 	// 선분에 다른 선분이 접촉한 경우도 고려
-	return (equal(ab, 0) || ab < 0) && 
-		(equal(cd, 0) || cd < 0);
+	return (equal(ab, (T)0) || ab < 0) && 
+		(equal(cd, (T)0) || cd < 0);
 }
 
 // ab선분과 cd선분이 겹치는지 여부를 반환
-// 겹치는 경우 교점(무한개면 임의의 교점)을 x에 저장 
-bool segIntersection(VT a, VT b, VT c, VT d, VT& x) {
-	if (lineIntersection(a, b, c, d, x))
-		return inRange(x, a, b) && inRange(x, c, d);
-	if (b < a) swap(a, b); if (d < c) swap(c, d);
-	if (!equal(ccw(a, b, c), 0) || d < a || b < c) return false;
-	if (a < c) x = c; else x = a;
-	return true;
+// 겹치는 경우 교점(무한개면 임의의 교점)을 x에 저장
+template <typename T>
+bool segIntersection(VT<T> a, VT<T> b, VT<T> c, VT<T> d, VT<T>& x) {
+	if constexpr(is_same_v<T, double>) {
+		if (lineIntersection(a, b, c, d, x))
+			return inRange(x, a, b) && inRange(x, c, d);
+		if (b < a) swap(a, b); if (d < c) swap(c, d);
+		if (!equal(ccw(a, b, c), (T)0) || d < a || b < c) return false;
+		if (a < c) x = c; else x = a;
+		return true;
+	}
+	else {assert(0); return false;}
 }
 
 // 점 p에서 ab직선에 내린 수선의 발을 반환
-VT foot(VT p, VT a, VT b) {
+template <typename T>
+VT<T> foot(VT<T> p, VT<T> a, VT<T> b) {
 	return a + (p-a).project(b-a);
 }
 
 // 점 p에서 ab직선까지의 최소 거리를 반환
-double pointToLine(VT p, VT a, VT b) {
+template <typename T>
+T pointToLine(VT<T> p, VT<T> a, VT<T> b) {
 	return (p-foot(p, a, b)).norm();
 }
 
 // 점 p에서 ab선분까지의 최소 거리를 반환
-double pointToSeg(VT p, VT a, VT b) {
+template <typename T>
+T pointToSeg(VT<T> p, VT<T> a, VT<T> b) {
 	VT h = foot(p, a, b);
 	if (inRange(h, a, b)) return (p-h).norm();
 	return min((p-a).norm(), (p-b).norm());
 }
 
 // ab선분에서 cd선분까지의 최소 거리를 반환
-double segToSeg(VT a, VT b, VT c, VT d) {
-	if (segIntersect(a, b, c, d)) return 0.0;
+template <typename T>
+T segToSeg(VT<T> a, VT<T> b, VT<T> c, VT<T> d) {
+	if (segIntersect(a, b, c, d)) return (T)0;
 	return min({pointToSeg(a, c, d), pointToSeg(b, c, d),
 		pointToSeg(c, a, b), pointToSeg(d, a, b)});
 }
 
-// 다각형 p의 넓이를 반환
-double area(const vector<VT>& p) {
-	double ret = 0;
+// 다각형 p의 넓이를 반환, 정수형의 경우 2로 나누지 않음
+template <typename T>
+T area(const vector<VT<T>>& p) {
+	T ret = 0;
 	for (int i = 0; i < p.size(); ++i) {
 		int j = (i+1)%p.size();
 		ret += p[i].cross(p[j]);
 	}
-	return fabs(ret) / 2;
+	if constexpr(is_same_v<T, double>) return fabs(ret)/2;
+	else return abs(ret);
 }
 
 // 점 q가 다각형 p의 경계에 위치하는지 여부를 반환
-bool onBound(const vector<VT>& p, VT q) {
+template <typename T>
+bool onBound(const vector<VT<T>>& p, VT<T> q) {
 	for (int i = 0; i < p.size(); ++i) {
 		int j = (i+1)%p.size();
-		if (equal(ccw(q, p[i], p[j]), 0) && 
+		if (equal(ccw(q, p[i], p[j]), (T)0) && 
 			inRange(q, p[i], p[j]))
 			return true;
 	}
@@ -140,17 +192,21 @@ bool onBound(const vector<VT>& p, VT q) {
 }
 
 // 점 q가 다각형 p의 내부에 있는지 외부에 있는지를 판별
-// q가 p의 경계에 없는 상태(=!onBound(p, q))를 가정
-bool inside(const vector<VT>& p, VT q) {
-	int cross = 0, n = p.size();
-	for (int i = 0; i < n; ++i) {
-		int j = (i+1)%n;
-		if ((!equal(p[i].y, q.y) && p[i].y > q.y) !=
-			(!equal(p[j].y, q.y) && p[j].y > q.y)) {
-			double atX = (q.y - p[i].y) * (p[j].x - p[i].x) /
-				(p[j].y - p[i].y) + p[i].x;
-			if (q.x < atX) ++cross;	
+template <typename T>
+bool inside(const vector<VT<T>>& p, VT<T> q) {
+	if constexpr(is_same_v<T, double>) {
+		if (onBound(p, q)) return false;
+		int cross = 0, n = sz(p);
+		for (int i = 0; i < n; ++i) {
+			int j = (i+1)%n;
+			if ((!equal(p[i].y, q.y) && p[i].y > q.y) !=
+				(!equal(p[j].y, q.y) && p[j].y > q.y)) {
+				double atX = (q.y - p[i].y) * (p[j].x - p[i].x) /
+					(p[j].y - p[i].y) + p[i].x;
+				if (q.x < atX) ++cross;	
+			}
 		}
+		return cross%2 > 0;
 	}
-	return cross%2 > 0;
+	else {assert(0); return false;}
 }
