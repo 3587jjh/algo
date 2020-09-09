@@ -1,6 +1,6 @@
 typedef complex<double> Complex;
 const double PI = 2.0 * acos(0.0);
-struct BigInt { // for positive only
+struct BigInt { // non-negative only
 	vector<int> v; // reversed
 	BigInt() {}
 	BigInt(const string& str) {
@@ -96,19 +96,37 @@ struct BigInt { // for positive only
 		ret.normalize();
 		return ret;
 	}
+	BigInt& operator +=(const BigInt& rhs) {
+		v.resize(max(v.size(), rhs.v.size()));
+		for (int i = 0; i < rhs.v.size(); ++i)
+			v[i] += rhs.v[i];
+		normalize();
+		return *this;
+	}
 	BigInt operator -(const BigInt& rhs) const {
-		assert(!(*this < rhs));
+		assert(rhs <= *this);
 		BigInt ret = *this;
 		for (int i = 0; i < rhs.v.size(); ++i)
 			ret.v[i] -= rhs.v[i];
 		ret.normalize();
 		return ret;
 	}
+	BigInt& operator -=(const BigInt& rhs) {
+		for (int i = 0; i < rhs.v.size(); ++i)
+			v[i] -= rhs.v[i];
+		normalize();
+		return *this;
+	}
 	BigInt operator *(const BigInt& rhs) const {
 		BigInt ret;
 		ret.v = multiply(v, rhs.v);
 		ret.normalize();
 		return ret;
+	}
+	BigInt& operator *=(const BigInt& rhs) {
+		v = multiply(v, rhs.v);
+		normalize();
+		return *this;
 	}
 };
 ostream& operator <<(ostream& os, const BigInt& x) {
