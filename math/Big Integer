@@ -1,6 +1,6 @@
 typedef complex<double> Complex;
 const double PI = 2.0 * acos(0.0);
-struct BigInt { // for positive inly
+struct BigInt { // for positive only
 	vector<int> v; // reversed
 	BigInt() {}
 	BigInt(const string& str) {
