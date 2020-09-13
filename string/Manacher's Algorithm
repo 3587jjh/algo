@@ -1,28 +1,30 @@
-
-// calculate the longest palindrome length
-int manacher(const vector<int>& input) {
-  // dummy value shouldn't be included in the input
-  int dummy = INT_MAX;
-  vector<int> v = {dummy};
-
-  for (auto it : input) {
-    v.push_back(it);
-    v.push_back(dummy);
-  }
-  int n = v.size();
-  int ret = 0, r = 0, p = 0;
-  vector<int> A(n, 0);
-
-  for (int i = 1; i < n; ++i) {
-    if (i <= r) A[i] = min(r-i, A[2*p-i]);
-
-    while (0 <= i-A[i]-1 && i+A[i]+1 < n &&
-      v[i-A[i]-1] == v[i+A[i]+1]) {
-      ++A[i];    
-    }
-    if (i+A[i] > r)
-      r = i+A[i], p = i;
-    ret = max(ret, A[i]);
-  }
-  return ret;
+// i번째 위치를 중심으로 하는 홀수/짝수 길이의 최대 팰린드롬 길이 계산
+vii manacher(const vector<int>& input) {
+	int dummy = inf<int>();
+	vector<int> v = {dummy};
+	for (auto it : input) {
+		v.push_back(it);
+		v.push_back(dummy);
+	}
+	int n = v.size();
+	int r = 0, p = 0;
+	vector<int> A(n, 0);
+	vii ret(sz(input));
+	
+	for (int i = 1; i < n; ++i) {
+		if (i <= r) A[i] = min(r-i, A[p+p-i]);
+		while (0 <= i-A[i]-1 && i+A[i]+1 < n &&
+			v[i-A[i]-1] == v[i+A[i]+1]) {
+			++A[i];
+		}
+		if (i+A[i] > r) {r = i+A[i]; p = i;}
+		if (i&1) ret[i>>1].fst = A[i]>>1;
+		else ret[(i-1)>>1].snd = A[i]>>1;
+	}
+	return ret;
+}
+vii manacher(const string& input) {
+	vector<int> v;
+	for (auto it : input) v.pushb(it);
+	return manacher(v);
 }
