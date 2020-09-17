@@ -1,28 +1,29 @@
-struct MatrixCalc {
-	typedef vector<vector<LL>> VVL;
-	int N; LL MOD;
-	MatrixCalc(int _N, LL _MOD) :
-		MOD(_MOD), N(_N) {}
-
-	VVL E() { // identity
-		VVL ret(N, vector<LL>(N));
-		for (int i = 0; i < N; ++i) ret[i][i] = 1;
-		return ret;
-	}
-	VVL mult(const VVL& A, const VVL& B) {
-		VVL ret(N, vector<LL>(N));
-		for (int i = 0; i < N; ++i)
-			for (int j = 0; j < N; ++j)
-				for (int k = 0; k < N; ++k) {
-					ret[i][j] += A[i][k] * B[k][j];
-					ret[i][j] %= MOD;
-				}
-		return ret;
-	}
-	VVL pow(const VVL& A, int p) {
-		if (p == 0) return E();
-		if (p&1) return mult(A, pow(A, p-1));
-		VVL B = pow(A, p>>1);
-		return mult(B, B);
-	}
-};
+vvl getE(int n) {
+	vvl ret(n, vector<ll>(n));
+	for (int i = 0; i < n; ++i) ret[i][i] = 1;
+	return ret;
+}
+vvl operator +(const vvl& A, const vvl& B) {
+	vvl ret = A;
+	for (int i = 0; i < sz(A); ++i)
+		for (int j = 0; j < sz(A[0]); ++j)
+			ret[i][j] = (ret[i][j]+B[i][j])%MOD;
+	return ret;
+}
+vvl operator *(const vvl& A, const vvl& B) {
+	int a = sz(A), b = sz(A[0]), c = sz(B[0]);
+	vvl ret(a, vector<ll>(c));
+	for (int i = 0; i < a; ++i)
+		for (int j = 0; j < c; ++j)
+			for (int k = 0; k < b; ++k) {
+				ret[i][j] += A[i][k] * B[k][j];
+				ret[i][j] %= MOD;
+			}
+	return ret;
+}
+vvl pow(const vvl& A, int p) {
+	if (p == 0) return getE(sz(A));
+	if (p&1) return A*pow(A, p-1);
+	vvl B = pow(A, p>>1);
+	return B*B;
+}
