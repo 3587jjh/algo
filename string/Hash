@@ -1,38 +1,41 @@
-struct Hash3 {
-	struct Hash {
-		string s; int MAX;
-		ull R;
-		vector<ull> powR, h;
+const ull R[3] = {(ull)37, (ull)1e9+3, (ull)1e9+7}; // can modify
+struct Hash {
+	const vector<ll>& v;
+	ull R;
+	vector<ull> powR, h;
 
-		Hash() {}
-		Hash(string _s, int _MAX, ull _R) : s(_s), MAX(_MAX), R(_R) {
-			// MAX = 부분 문자열의 최대 차수로 통일시킬 값
-			powR.resize(MAX+1);
-			powR[0] = 1;
-			for (int i = 1; i <= MAX; ++i) {
-				powR[i] = powR[i-1]*R;
-			}
-			int n = s.size();
-			h.resize(n+1);
-			for (int i = 1; i <= n; ++i) {
-				h[i] = h[i-1] + s[i-1]*powR[i];
-			}
+	Hash(const vector<ll>& _v, ull _R) : v(_v), R(_R) { // 0-based
+		// MAX = 부분 문자열의 최대 차수로 통일시킬 값
+		powR.resize(MAX+1);
+		powR[0] = 1;
+		for (int i = 1; i <= MAX; ++i) {
+			powR[i] = powR[i-1]*R;
 		}
-		ull getval(int l, int r) {
-			return (h[r]-h[l-1])*powR[MAX-r];
-		}
-	};
-	string s; int MAX;
-	Hash f[3];
-
-	Hash3(string _s, int _MAX) : s(_s), MAX(_MAX) {
-		const ull R[3] = {(ull)37, (ull)1e9+3, (ull)1e9+7}; // can modify
-		for (int i = 0; i < 3; ++i) {
-			f[i] = Hash(s, MAX, R[i]);
+		int n = sz(v);
+		h.resize(n);
+		for (int i = 0; i < n; ++i) {
+			h[i] = v[i]*powR[i];
+			if (i > 0) h[i] += h[i-1];
 		}
 	}
 	/******user interface******/
-	ull getval(int l, int r) { // 1-based
+	ull getval(int l, int r) { // 0-based
+		ull mult = h[r] - (l==0 ? 0 : h[l-1]);
+		return mult*powR[MAX-r];
+	}
+};
+
+struct Hash3 {
+	const vector<ll>& v;
+	vector<Hash> f;
+
+	Hash3(const vector<ll>& _v) : v(_v) { // 0-based
+		for (int i = 0; i < 3; ++i) {
+			f.pushb(Hash(v, R[i]));
+		}
+	}
+	/******user interface******/
+	ull getval(int l, int r) { // 0-based
 		ull ret = 0;
 		for (int i = 0; i < 3; ++i) {
 			ret += f[i].getval(l, r);
