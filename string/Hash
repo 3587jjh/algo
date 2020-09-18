@@ -1,11 +1,11 @@
 struct Hash3 {
 	struct Hash {
 		string s; int MAX;
-		ULL R;
-		vector<ULL> powR, h;
+		ull R;
+		vector<ull> powR, h;
 
 		Hash() {}
-		Hash(string _s, int _MAX, ULL _R) : s(_s), MAX(_MAX), R(_R) {
+		Hash(string _s, int _MAX, ull _R) : s(_s), MAX(_MAX), R(_R) {
 			// MAX = 부분 문자열의 최대 차수로 통일시킬 값
 			powR.resize(MAX+1);
 			powR[0] = 1;
@@ -18,7 +18,7 @@ struct Hash3 {
 				h[i] = h[i-1] + s[i-1]*powR[i];
 			}
 		}
-		ULL getval(int l, int r) {
+		ull getval(int l, int r) {
 			return (h[r]-h[l-1])*powR[MAX-r];
 		}
 	};
@@ -26,14 +26,14 @@ struct Hash3 {
 	Hash f[3];
 
 	Hash3(string _s, int _MAX) : s(_s), MAX(_MAX) {
-		const ULL R[3] = {(ULL)37, (ULL)1e9+3, (ULL)1e9+7}; // can modify
+		const ull R[3] = {(ull)37, (ull)1e9+3, (ull)1e9+7}; // can modify
 		for (int i = 0; i < 3; ++i) {
 			f[i] = Hash(s, MAX, R[i]);
 		}
 	}
 	/******user interface******/
-	ULL getval(int l, int r) { // 1-based
-		ULL ret = 0;
+	ull getval(int l, int r) { // 1-based
+		ull ret = 0;
 		for (int i = 0; i < 3; ++i) {
 			ret += f[i].getval(l, r);
 		}
