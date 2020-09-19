@@ -1,27 +1,32 @@
+// define MAX(=maximum string length) -> precalcR -> Hash3
 const ull R[3] = {(ull)37, (ull)1e9+3, (ull)1e9+7}; // can modify
+ull powR[3][MAX+1];
+
+void precalcR() {
+	for (int i = 0; i < 3; ++i) {
+		powR[i][0] = 1;
+		for (int j = 1; j <= MAX; ++j) {
+			powR[i][j] = powR[i][j-1]*R[i];
+		}
+	}
+}
 struct Hash {
 	const vector<ll>& v;
-	ull R;
-	vector<ull> powR, h;
+	int rIdx;
+	vector<ull> h;
 
-	Hash(const vector<ll>& _v, ull _R) : v(_v), R(_R) { // 0-based
-		// MAX = 부분 문자열의 최대 차수로 통일시킬 값
-		powR.resize(MAX+1);
-		powR[0] = 1;
-		for (int i = 1; i <= MAX; ++i) {
-			powR[i] = powR[i-1]*R;
-		}
+	Hash(const vector<ll>& _v, int _rIdx) : v(_v), rIdx(_rIdx) { // 0-based
 		int n = sz(v);
 		h.resize(n);
 		for (int i = 0; i < n; ++i) {
-			h[i] = v[i]*powR[i];
+			h[i] = v[i]*powR[rIdx][i];
 			if (i > 0) h[i] += h[i-1];
 		}
 	}
 	/******user interface******/
 	ull getval(int l, int r) { // 0-based
 		ull mult = h[r] - (l==0 ? 0 : h[l-1]);
-		return mult*powR[MAX-r];
+		return mult*powR[rIdx][MAX-r];
 	}
 };
 
@@ -31,7 +36,7 @@ struct Hash3 {
 
 	Hash3(const vector<ll>& _v) : v(_v) { // 0-based
 		for (int i = 0; i < 3; ++i) {
-			f.pushb(Hash(v, R[i]));
+			f.pushb(Hash(v, i));
 		}
 	}
 	/******user interface******/
