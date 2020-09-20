@@ -1,0 +1,49 @@
+struct SAT { // 1-based
+	int n, dn, sn;
+	vvi adj;
+	vector<int> seen, sccId;
+	stack<int> stk;
+
+	SAT(int _n) : n(_n) {adj.resize(2*n+1);}
+	int scc(int u) {
+		int ret = seen[u] = dn++;
+		stk.push(u);
+		for (auto v : adj[u]) {
+			if (!seen[v]) ret = min(ret, scc(v));
+			else if (!sccId[v]) ret = min(ret, seen[v]);
+		}
+		if (ret == seen[u]) {
+			while (true) {
+				int v = stk.top(); stk.pop();
+				sccId[v] = sn;
+				if (v == u) break;
+			}
+			++sn;
+		}
+		return ret;
+	}
+	void tarjanSCC() {
+		dn = sn = 1;
+		seen = sccId = vector<int>(2*n+1);
+		for (int u = 1; u <= 2*n; ++u) {
+			if (!seen[u]) scc(u);
+		}
+	}
+	/******user interface******/
+	void add(int u, int v, bool c1, bool c2) {
+		// [c1상태의u || c2상태의v]
+		adj[c1?u+n:u].pushb(c2?v:v+n);
+		adj[c2?v+n:v].pushb(c1?u:u+n);
+	}
+	vector<int> solve2SAT() {
+		tarjanSCC();
+		vector<int> isTrue(n+1);
+		for (int u = 1; u <= n; ++u) {
+			if (sccId[u] == sccId[u+n]) {
+				return vector<int>();
+			}
+			isTrue[u] = sccId[u] < sccId[u+n];
+		}
+		return isTrue;
+	}
+};
