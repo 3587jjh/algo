@@ -5,7 +5,7 @@ struct AhoCorasick {
 	vector<vector<int>> out;
 
 	AhoCorasick() : nid(1) {
-		trie.push_back(map<int, int>());
+		trie.pushb(map<int, int>());
 	}
 	/******user interface******/
 	void insert(const string& s, int sid) { // sid = 1-based
@@ -13,7 +13,7 @@ struct AhoCorasick {
 		for (char ch : s) {
 			if (!trie[x].count(ch)) {
 				trie[x][ch] = nid++;
-				trie.push_back(map<int, int>());
+				trie.pushb(map<int, int>());
 			}
 			x = trie[x][ch];
 		}
@@ -35,13 +35,13 @@ struct AhoCorasick {
 
 				fail[y] = t;
 				out[y] = out[t];
-				if (term[y]) out[y].push_back(term[y]);
+				if (term[y]) out[y].pushb(term[y]);
 				q.push(y);
 			}
 		}
 	}
-	vector<PII> findFrom(const string& s) {
-		vector<PII> ret; // (s에서 끝나는 위치, sid) 모음
+	vii findFrom(const string& s) {
+		vii ret; // (s에서 끝나는 위치, sid) 모음
 		int cur = 0;
 
 		for (int i = 0; i < s.size(); ++i) {
@@ -49,7 +49,7 @@ struct AhoCorasick {
 			while (cur && !trie[cur].count(e)) cur = fail[cur];
 			if (trie[cur].count(e)) cur = trie[cur][e];
 			for (auto it : out[cur])
-				ret.push_back({i, it});
+				ret.pushb({i, it});
 		}
 		return ret;
 	}
