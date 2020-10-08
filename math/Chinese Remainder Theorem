@@ -1,19 +1,20 @@
-LL exGcd(LL a, LL b, LL& x, LL& y) {
+// 중국인의 나머지 정리
+ll exGcd(ll a, ll b, ll& x, ll& y) {
 	if (b == 0) {x = 1; y = 0; return a;}
-	LL x1, y1;
-	LL ret = exGcd(b, a%b, x1, y1);   
+	ll x1, y1;
+	ll ret = exGcd(b, a%b, x1, y1);   
 	x = y1; y = x1 - (a/b)*y1;
 	return ret;
 }
 // 두 식을 만족하는 x의 일반항을 반환
 // x ≡ A.snd (mod A.fst)
 // x ≡ B.snd (mod B.fst)
-PLL CRT(PLL A, PLL B) {
-	LL a1 = A.snd, m1 = A.fst, a2 = B.snd, m2 = B.fst;
+pll CRT(pll A, pll B) {
+	ll a1 = A.snd, m1 = A.fst, a2 = B.snd, m2 = B.fst;
 	assert(a1 >= 0 && m1 > 0 && a2 >= 0 && m2 > 0);
-	LL k1, k2, g = exGcd(m1, m2, k1, k2);
+	ll k1, k2, g = exGcd(m1, m2, k1, k2);
 	assert(abs(a2-a1) % g == 0);
 	k1 *= (a2-a1)/g;
-	LL m = m1/g*m2;
+	ll m = m1/g*m2;
 	return {m, ((m1*k1+a1)%m+m)%m};
 }
