@@ -1,3 +1,5 @@
+// segment tree용 전역변수 tree[4*MAX], query, update
+// ...
 struct HLD {
 	int n, dn;
 	vector<int> in, out, par, sz, dep, top;
