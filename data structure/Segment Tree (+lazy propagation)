@@ -15,7 +15,7 @@ struct SegTree {
 	}
 	T init(int node, int nl, int nr) {
 		if (nl == nr) return tree[node] = /**write**/;
-		int nm = (nl+nr)/2;
+		int nm = (nl+nr)>>1;
 		return tree[node] = merge(init(node*2, nl, nm),
 			init(node*2+1, nm+1, nr));
 	}
@@ -32,7 +32,7 @@ struct SegTree {
 		propagate(node, nl, nr);
 		if (r < nl || nr < l) return /**write**/;
 		if (l <= nl && nr <= r) return tree[node];
-		int nm = (nl+nr)/2;
+		int nm = (nl+nr)>>1;
 		return merge(query(l, r, node*2, nl, nm),
 			query(l, r, node*2+1, nm+1, nr));
 	}
@@ -44,7 +44,7 @@ struct SegTree {
 			propagate(node, nl, nr);
 			return tree[node];
 		}
-		int nm = (nl+nr)/2;
+		int nm = (nl+nr)>>1;
 		return tree[node] = merge(update(l, r, val, node*2, nl, nm),
 			update(l, r, val, node*2+1, nm+1, nr));
 	}
