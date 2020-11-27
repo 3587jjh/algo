@@ -1,12 +1,13 @@
+struct Edge {
+	int to, c, f;
+	Edge* rev;
+	Edge(int _to, int _c) :
+		to(_to), c(_c), f(0) {}
+	int r() {return c-f;}
+	void push(int _f) {f+=_f; rev->f-=_f;}
+};
+	
 struct Dinic {
-	struct Edge {
-		int to, c, f;
-		Edge* rev;
-		Edge(int _to, int _c) :
-			to(_to), c(_c), f(0) {}
-		int r() {return c-f;}
-		void push(int _f) {f+=_f; rev->f-=_f;}
-	};
 	int MAXV;
 	vector<int> lv, work;
 	vector<vector<Edge*>> adj;
